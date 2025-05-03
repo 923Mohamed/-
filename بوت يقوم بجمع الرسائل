@@ -1,0 +1,36 @@
+php
+<?php
+require 'vendor/autoload.php'; // تأكد من وجود مكتبة php-telegram-bot
+
+use Telegram\Bot\Api;
+
+$telegram = new Api('YOUR_BOT_TOKEN'); // استبدل YOUR_BOT_TOKEN بالتوكن الخاص بك
+
+// دالة لجمع الرسائل
+function collectMessages($update) {
+    $chatId = $update['message']['chat']['id'];
+    $message = $update['message']['text'];
+    
+    // تخزين الرسائل في ملف
+    file_put_contents('messages.txt', "$chatId: $message\n", FILE_APPEND);
+}
+
+// معالجة التحديثات
+$update = $telegram->getWebhookUpdates();
+
+if (isset($update['message'])) {
+    collectMessages($update);
+}
+
+// إعداد Webhook
+$telegram->setWebhook('https://yourdomain.com/bot.php'); // استبدل yourdomain.com بالرابط الخاص بك
+
+echo "Webhook set!";
+?>
+```
+
+### 4. إعداد Webhook:
+- يجب عليك إعداد Webhook للبوت الخاص بك. يمكنك استخدام cURL أو أي أداة HTTP لإعداد الـ Webhook، مثل:
+```bash
+curl -F "url=https://yourdomain.com/bot.php" https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook
+```
